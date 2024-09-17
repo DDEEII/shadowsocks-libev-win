@@ -46,6 +46,12 @@ jobs:
           C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syu --needed --noconfirm --noprogressbar base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,pcre,c-ares,libsodium,mbedtls,ntldd,autotools}'
           C:\msys64\usr\bin\bash.exe -le (Join-Path (Get-Location) build.sh)
 
+      - name: Print debug info
+        run: |
+          pwd
+          ls -lR
+          find . -type f -name 'binaries.tar.gz'
+
       - name: Make and upload release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
