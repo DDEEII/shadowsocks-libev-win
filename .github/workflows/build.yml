@@ -43,3 +43,11 @@ jobs:
           C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syu --noconfirm --noprogressbar'
           C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syu --needed --noconfirm --noprogressbar base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,pcre,c-ares,libsodium,mbedtls,ntldd,autotools}'
           C:\msys64\usr\bin\bash.exe -le (Join-Path (Get-Location) build.sh)
+
+      - name: Make and upload release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          fail_on_unmatched_files: false
+          files: shadowsocks-libev/build/dst/binaries.tar.gz
+
