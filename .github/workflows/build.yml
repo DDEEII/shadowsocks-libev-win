@@ -48,9 +48,8 @@ jobs:
 
       - name: Print debug info
         run: |
-          pwd
-          ls -lR
-          find . -type f -name 'binaries.tar.gz'
+          $ErrorActionPreference = 'Continue'
+          C:\msys64\usr\bin\bash.exe -l -c 'pwd; ls -lR; find . -type f -name binaries.tar.gz'
 
       - name: Make and upload release
         uses: softprops/action-gh-release@v1
