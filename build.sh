@@ -58,5 +58,9 @@ echo "=== FILE PATHS / LOCATIONS: "
 pwd
 realpath binaries.tar.gz
 
+cp binaries.tar.gz $HOME
+ls -l $HOME
+realpath $HOME/binaries.tar.gz
+
 exit 0
 
