@@ -9,14 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x86, x86_64]
-        toolchain: [cygwin, mingw]
-        include:
-          - arch: x86
-            toolchain: mingw
-            msystem: MINGW32
-          - arch: x86_64
-            toolchain: mingw
-            msystem: MINGW64
+        toolchain: [cygwin]
     runs-on: windows-2019
     env:
       DEPLOYKEY: ${{ secrets.DEPLOYKEY }}
@@ -31,25 +24,16 @@ jobs:
           Invoke-WebRequest -Uri https://cygwin.com/setup-${{ matrix.arch }}.exe -OutFile cygwin.exe
           start -Wait .\cygwin.exe '-qng -R cygwin -s http://cygwin.mirror.constant.com -P git -P curl -P gettext -P gcc-core -P gcc-g++ -P cmake -P make -P libpcre-devel -P libcares-devel -P libev-devel -P libsodium-devel -P mbedtls-devel'
           .\cygwin\bin\bash.exe -le (Join-Path (Get-Location) build.sh)
-      - shell: powershell
-        if: ${{ matrix.toolchain == 'mingw' }}
-        env:
-          MSYSTEM: ${{ matrix.msystem }}
-        run: |
-          $ErrorActionPreference = 'Continue'
-          C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syu --noconfirm --noprogressbar'
-          C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syu --needed --noconfirm --noprogressbar base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,pcre,c-ares,libsodium,mbedtls,ntldd,autotools}'
-          C:\msys64\usr\bin\bash.exe -le (Join-Path (Get-Location) build.sh)
 
       - name: Print debug info
         run: |
           $ErrorActionPreference = 'Continue'
-          C:\msys64\usr\bin\bash.exe -l -c 'pwd; ls -lR; ls -lR shadowsocks-libev/build/dst shadowsocks-libev/build/dst/binaries.tar.gz; find . -type f -name binaries.tar.gz'
+          C:\msys64\usr\bin\bash.exe -l -c 'pwd; ls -lR; ls -lR ./shadowsocks-libev/build/dst ./shadowsocks-libev/build/dst/binaries.tar.gz; find . -type f -name binaries.tar.gz'
 
       - name: Make and upload release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           fail_on_unmatched_files: false
-          files: shadowsocks-libev/build/dst/binaries.tar.gz
+          files: ./shadowsocks-libev/build/dst/binaries.tar.gz
 
