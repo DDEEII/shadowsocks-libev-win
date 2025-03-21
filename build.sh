@@ -27,7 +27,7 @@ eval cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo $cmake_args
 make
 
 mkdir dst
-cp shared/bin/* lib/libshadowsocks-libev.dll.a  bin/*.dll ../src/shadowsocks.h ../LICENSE dst
+cp shared/bin/* lib/libshadowsocks-libev.dll.a bin/*.dll ../src/shadowsocks.h ../LICENSE dst
 cd dst
 if [[ "$TOOLCHAIN" == 'cygwin' ]]; then
 	bin_prefix='\/usr\/bin\/'
@@ -52,15 +52,17 @@ if [[ "$TOOLCHAIN" == 'mingw' ]]; then
 	echo "$script" | ar -M
 fi
 
+# Save final binaries in the `dst` directory
 tar czf binaries.tar.gz *
 
-echo "=== FILE PATHS / LOCATIONS: "
-pwd
-realpath binaries.tar.gz
+# Define a Windows-accessible directory (on the D: drive)
+WINDOWS_OUTPUT_DIR="/cygdrive/d/shadowsocks-builds"
 
-cp binaries.tar.gz $HOME
-ls -l $HOME
-realpath $HOME/binaries.tar.gz
+# Create the directory if it doesn't exist
+mkdir -p "$WINDOWS_OUTPUT_DIR"
 
-exit 0
+# Copy the final tarball to the Windows-accessible directory
+cp binaries.tar.gz "$WINDOWS_OUTPUT_DIR/shadowsocks-libev-$TOOLCHAIN-$ARCH.tar.gz"
 
+# Print a success message
+echo "Build artifacts have been saved to $WINDOWS_OUTPUT_DIR/shadowsocks-libev-$TOOLCHAIN-$ARCH.tar.gz"
